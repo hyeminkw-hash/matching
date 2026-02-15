@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>matching - 소개팅 매칭 신청</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #C97C7C;
+            --accent: #8B4E4E;
+            --accent-dark: #6B3B3B;
+            --text: #E8E8E8;
+            --text-light: #B0B0B0;
+            --bg: #1A1A1A;
+            --card: #252525;
+            --border: #3A3A3A;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1A1A1A 0%, #0F0F0F 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            position: relative;
+            overflow-x: hidden;
+            font-weight: 500;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(201, 124, 124, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -30%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 78, 78, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2A1A1A 0%, #1A1A1A 50%, #1F1515 100%);
+            z-index: 2000;
+            cursor: pointer;
+            animation: fadeIn 1s ease;
+        }
+
+        .intro-content {
+            text-align: center;
+            animation: fadeInUp 1s ease;
+        }
+
+        .intro-greeting {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, rgba(255, 255, 255, 0.3) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            letter-spacing: 2px;
+        }
+
+        .intro-welcome {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, var(--primary) 0%, rgba(255, 255, 255, 0.3) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .intro-description {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            color: var(--text);
+            font-weight: 500;
+            line-height: 2;
+            text-align: center;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .intro-description-highlight {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, rgba(255, 255, 255, 0.3) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        .intro-description strong {
+            font-weight: 700;
+        }
+
+        .intro-screen.hidden {
+            display: none;
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .logo {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 2rem 0;
+            animation: fadeIn 1s ease 0.3s both;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-dark) 100%);
+            border-radius: 10px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            border: 1px solid var(--border);
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .section.hidden {
+            display: none;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .section-desc {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        input::placeholder,
+        select::placeholder,
+        textarea::placeholder {
+            color: var(--text-light);
+            opacity: 0.7;
+        }
+
+        select option {
+            background: var(--card);
+            color: var(--text);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--card);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(139, 78, 78, 0.3);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .balance-question {
+            margin-bottom: 2.5rem;
+        }
+
+        .question-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .vs-divider {
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+
+        .choice-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .choice-btn {
+            padding: 2rem 1.5rem;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            background: var(--card);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .choice-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+
+        .choice-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(139, 78, 78, 0.4);
+            border-color: var(--accent);
+        }
+
+        .choice-btn.selected {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: white;
+        }
+
+        .choice-btn.selected::before {
+            opacity: 1;
+        }
+
+        .choice-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .choice-emoji {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 0.8rem;
+        }
+
+        .choice-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 78, 78, 0.5);
+            background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg);
+            border-color: var(--text-light);
+        }
+
+        .photo-preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .photo-preview-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            background: var(--bg);
+        }
+
+        .photo-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-remove-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .photo-remove-btn:hover {
+            background: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: scaleIn 0.5s ease;
+        }
+
+        .success-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, rgba(255, 255, 255, 0.3) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .success-text {
+            color: var(--text-light);
+            line-height: 1.8;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 1.6rem;
+            }
+
+            .choice-container {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-container {
+                flex-direction: column;
+            }
+
+            .intro-greeting {
+                font-size: 1.5rem;
+            }
+
+            .intro-welcome {
+                font-size: 1.1rem;
+            }
+
+            .intro-description {
+                font-size: 1rem;
+                line-height: 1.8;
+            }
+
+            .intro-description-highlight {
+                font-size: 1.3rem;
+            }
+
+            .success-title {
+                font-size: 1.5rem;
+            }
+
+            .success-text {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header" id="mainHeader">
+            <div class="logo">matching</div>
+            <div class="subtitle">어울리는 만남을 위한 첫걸음</div>
+        </div>
+
+        <div class="progress-bar" id="progressBarContainer">
+            <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+        </div>
+
+        <!-- Step 1: 기본 정보 -->
+        <div class="section" id="step1" style="animation-delay: 0.2s">
+            <h2 class="section-title">기본 정보</h2>
+            <p class="section-desc">만남을 위한 기본적인 정보를 입력해주세요.</p>
+            
+            <div class="form-group">
+                <label for="name">이름 *</label>
+                <input type="text" id="name" required placeholder="홍길동">
+            </div>
+
+            <div class="form-group">
+                <label for="age">나이 *</label>
+                <input type="number" id="age" required placeholder="28" min="18" max="99">
+            </div>
+
+            <div class="form-group">
+                <label for="gender">성별 *</label>
+                <select id="gender" required>
+                    <option value="">선택해주세요</option>
+                    <option value="male">남성</option>
+                    <option value="female">여성</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">연락처 *</label>
+                <input type="tel" id="phone" required placeholder="010-1234-5678">
+            </div>
+
+            <div class="form-group">
+                <label for="photos">프로필 사진 (최소 3장 필수) *</label>
+                <div style="margin-bottom: 0.5rem; color: var(--text-light); font-size: 0.85rem;">
+                    본인의 얼굴이 잘 보이는 최근 사진을 업로드해주세요.
+                </div>
+                <input type="file" id="photos" accept="image/*" multiple style="display: none;" onchange="handlePhotoUpload(event)">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('photos').click()" style="margin-bottom: 1rem;">
+                    📷 사진 선택하기
+                </button>
+                <div id="photoPreview" class="photo-preview-container"></div>
+                <div id="photoCount" style="margin-top: 0.5rem; color: var(--text-light); font-size: 0.9rem; font-weight: 600;">
+                    선택된 사진: 0장 (최소 3장 필요)
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="nextStep(1)">다음 단계</button>
+        </div>
+
+        <!-- Step 2: 밸런스 게임 -->
+        <div class="section hidden" id="step2" style="animation-delay: 0.2s">
+            <h2 class="section-title">취향 알아보기</h2>
+            <p class="section-desc">밸런스 게임을 통해 당신의 취향을 알려주세요. 더 끌리는 쪽을 선택해주세요!</p>
+
+            <div class="balance-question">
+                <div class="question-text">이상적인 첫 데이트 코스는?</div>
+                <div class="choice-container" style="grid-template-columns: 1fr;">
+                    <div class="choice-btn" onclick="selectChoice(this, 'q1', 'cafe')">
+                        <div class="choice-content">
+                            <span class="choice-emoji">☕</span>
+                            <div class="choice-text">카페에서 천천히 이야기 나누기</div>
+                        </div>
+                    </div>
+                    <div class="choice-btn" onclick="selectChoice(this, 'q1', 'meal')">
+                        <div class="choice-content">
+                            <span class="choice-emoji">🍽️</span>
+                            <div class="choice-text">맛있는 식사 함께하기</div>
+                        </div>
+                    </div>
+                    <div class="choice-btn" onclick="selectChoice(this, 'q1', 'drink')">
+                        <div class="choice-content">
+                            <span class="choice-emoji">🍷</span>
+                            <div class="choice-text">술 한잔 하며 조금 더 가까워지기</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="balance-question">
+                <div class="question-text">주말을 보내는 방법은?</div>
+                <div class="choice-container">
+                    <div class="choice-btn" onclick="selectChoice(this, 'q2', 'indoor')">
+                        <div class="choice-content">
+                            <span class="choice-emoji">🏠</span>
+                            <div class="choice-text">집에서 편하게<br>영화나 게임</div>
+                        </div>
+                    </div>
+                    <div class="choice-btn" onclick="selectChoice(this, 'q2', 'outdoor')">
+                        <div class="choice-content">
+                            <span class="choice-emoji">🌳</span>
+                            <div class="choice-text">야외에서 활동적으로<br>산책이나 운동</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="balance-question">
+                <div class="question-text">식사 스타일은?</div>
+                <div class="choice-container">
+                    <div class="choice-btn" onclick="selectChoice(this, 'q3', 'fine')">
+                        <div class="choice-content">
+                            <span class="choice-emoji">🍽️</span>
+                            <div class="choice-text">분위기 좋은<br>레스토랑</div>
+                        </div>
+                    </div>
+                    <div class="choice-btn" onclick="selectChoice(this, 'q3', 'casual')">
+                        <div class="choice-content">
+                            <span class="choice-emoji">🍜</span>
+                            <div class="choice-text">편한 분위기의<br>맛집 탐방</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="balance-question">
+                <div class="question-text">대화 스타일은?</div>
+                <div class="choice-container">
+                    <div class="choice-btn" onclick="selectChoice(this, 'q4', 'deep')">
+                        <div class="choice-content">
+                            <span class="choice-emoji">💭</span>
+                            <div class="choice-text">깊이 있는<br>진지한 대화</div>
+                        </div>
+                    </div>
+                    <div class="choice-btn" onclick="selectChoice(this, 'q4', 'fun')">
+                        <div class="choice-content">
+                            <span class="choice-emoji">😄</span>
+                            <div class="choice-text">유쾌하고<br>재미있는 농담</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="balance-question">
+                <div class="question-text">이상형의 성격은?</div>
+                <div class="choice-container">
+                    <div class="choice-btn" onclick="selectChoice(this, 'q5', 'calm')">
+                        <div class="choice-content">
+                            <span class="choice-emoji">🌙</span>
+                            <div class="choice-text">차분하고<br>신중한 스타일</div>
+                        </div>
+                    </div>
+                    <div class="choice-btn" onclick="selectChoice(this, 'q5', 'bright')">
+                        <div class="choice-content">
+                            <span class="choice-emoji">☀️</span>
+                            <div class="choice-text">밝고<br>적극적인 스타일</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn btn-secondary" onclick="prevStep(2)">이전</button>
+                <button class="btn btn-primary" onclick="nextStep(2)">다음 단계</button>
+            </div>
+        </div>
+
+        <!-- Step 3: 추가 정보 -->
+        <div class="section hidden" id="step3" style="animation-delay: 0.2s">
+            <h2 class="section-title">추가 정보</h2>
+            <p class="section-desc">더 나은 매칭을 위해 조금만 더 알려주세요.</p>
+
+            <div class="form-group">
+                <label for="school">출신학교 *</label>
+                <input type="text" id="school" required placeholder="예: 서울대학교, 연세대학교 등">
+            </div>
+
+            <div class="form-group">
+                <label for="job">직업 *</label>
+                <input type="text" id="job" required placeholder="예: 회사원, 디자이너, 개발자 등">
+            </div>
+
+            <div class="form-group">
+                <label for="location">거주 지역 *</label>
+                <input type="text" id="location" required placeholder="예: 서울 강남구, 경기 성남시 분당구 등">
+            </div>
+
+            <div class="form-group">
+                <label for="hobby">취미/관심사 *</label>
+                <input type="text" id="hobby" required placeholder="예: 영화 감상, 등산, 요리 등">
+            </div>
+
+            <div class="form-group">
+                <label for="introduce">자기소개 *</label>
+                <textarea id="introduce" required placeholder="자유롭게 자신을 소개해주세요."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="preference">원하는 이상형이나 특별히 바라는 점 *</label>
+                <textarea id="preference" required placeholder="이상형이나 만남에서 중요하게 생각하는 점을 알려주세요."></textarea>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn btn-secondary" onclick="prevStep(3)">이전</button>
+                <button class="btn btn-primary" onclick="submitForm()">신청 완료</button>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div class="section hidden" id="success" style="animation-delay: 0.2s">
+            <div class="success-message">
+                <h2 class="success-title">신청이 완료되었습니다!</h2>
+                <p class="success-text">
+                    소중한 정보를 보내주셔서 감사합니다.<br>
+                    곧 연락드리겠습니다.<br>
+                    나와 어울리는 인연이 기다리고 있을거에요!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 카카오톡 인앱 브라우저의 console 메시지 숨기기
+        (function() {
+            const originalLog = console.log;
+            const originalWarn = console.warn;
+            const originalError = console.error;
+            
+            console.log = function(...args) {
+                const message = args.join(' ');
+                if (message.includes('kakao') || message.includes('Kakao') || message.includes('injected')) {
+                    return;
+                }
+                originalLog.apply(console, args);
+            };
+            
+            console.warn = function(...args) {
+                const message = args.join(' ');
+                if (message.includes('kakao') || message.includes('Kakao') || message.includes('injected')) {
+                    return;
+                }
+                originalWarn.apply(console, args);
+            };
+            
+            console.error = function(...args) {
+                const message = args.join(' ');
+                if (message.includes('kakao') || message.includes('Kakao') || message.includes('injected')) {
+                    return;
+                }
+                originalError.apply(console, args);
+            };
+        })();
+
+        let currentStep = 1;
+        const totalSteps = 3;
+        const formData = {
+            basicInfo: {},
+            preferences: {},
+            additionalInfo: {},
+            photos: []
+        };
+
+        function handlePhotoUpload(event) {
+            const files = Array.from(event.target.files);
+            const previewContainer = document.getElementById('photoPreview');
+            
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        formData.photos.push({
+                            data: e.target.result,
+                            name: file.name,
+                            size: file.size
+                        });
+                        
+                        const photoItem = document.createElement('div');
+                        photoItem.className = 'photo-preview-item';
+                        photoItem.innerHTML = `
+                            <img src="${e.target.result}" alt="프로필 사진">
+                            <button class="photo-remove-btn" onclick="removePhoto(${formData.photos.length - 1})" type="button">×</button>
+                        `;
+                        previewContainer.appendChild(photoItem);
+                        
+                        updatePhotoCount();
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Reset input
+            event.target.value = '';
+        }
+
+        function removePhoto(index) {
+            formData.photos.splice(index, 1);
+            
+            const previewContainer = document.getElementById('photoPreview');
+            previewContainer.innerHTML = '';
+            
+            formData.photos.forEach((photo, i) => {
+                const photoItem = document.createElement('div');
+                photoItem.className = 'photo-preview-item';
+                photoItem.innerHTML = `
+                    <img src="${photo.data}" alt="프로필 사진">
+                    <button class="photo-remove-btn" onclick="removePhoto(${i})" type="button">×</button>
+                `;
+                previewContainer.appendChild(photoItem);
+            });
+            
+            updatePhotoCount();
+        }
+
+        function updatePhotoCount() {
+            const count = formData.photos.length;
+            const countElement = document.getElementById('photoCount');
+            
+            if (count >= 3) {
+                countElement.innerHTML = `선택된 사진: ${count}장 ✅`;
+                countElement.style.color = 'var(--primary)';
+            } else {
+                countElement.innerHTML = `선택된 사진: ${count}장 (최소 3장 필요)`;
+                countElement.style.color = 'var(--text-light)';
+            }
+        }
+
+        function startApplication() {
+            // No longer needed - page loads directly
+        }
+
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function nextStep(step) {
+            // Validate current step
+            if (step === 1) {
+                const name = document.getElementById('name').value;
+                const age = document.getElementById('age').value;
+                const gender = document.getElementById('gender').value;
+                const phone = document.getElementById('phone').value;
+
+                if (!name || !age || !gender || !phone) {
+                    alert('필수 항목을 모두 입력해주세요.');
+                    return;
+                }
+
+                if (formData.photos.length < 3) {
+                    alert('프로필 사진을 최소 3장 이상 업로드해주세요.');
+                    return;
+                }
+
+                formData.basicInfo = {
+                    name,
+                    age,
+                    gender,
+                    phone
+                };
+            } else if (step === 2) {
+                // Check if all balance questions are answered
+                const requiredQuestions = ['q1', 'q2', 'q3', 'q4', 'q5'];
+                const allAnswered = requiredQuestions.every(q => formData.preferences[q]);
+                
+                if (!allAnswered) {
+                    alert('모든 밸런스 게임 질문에 답해주세요.');
+                    return;
+                }
+            }
+
+            // Hide current step
+            document.getElementById('step' + step).classList.add('hidden');
+            
+            // Show next step
+            currentStep = step + 1;
+            document.getElementById('step' + currentStep).classList.remove('hidden');
+            
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function prevStep(step) {
+            document.getElementById('step' + step).classList.add('hidden');
+            currentStep = step - 1;
+            document.getElementById('step' + currentStep).classList.remove('hidden');
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectChoice(element, question, value) {
+            // Remove selection from siblings
+            const siblings = element.parentElement.querySelectorAll('.choice-btn');
+            siblings.forEach(btn => btn.classList.remove('selected'));
+            
+            // Add selection to clicked element
+            element.classList.add('selected');
+            
+            // Store the choice
+            formData.preferences[question] = value;
+        }
+
+        function submitForm() {
+            // Validate additional info
+            const school = document.getElementById('school').value;
+            const job = document.getElementById('job').value;
+            const location = document.getElementById('location').value;
+            const hobby = document.getElementById('hobby').value;
+            const introduce = document.getElementById('introduce').value;
+            const preference = document.getElementById('preference').value;
+
+            if (!school || !job || !location || !hobby || !introduce || !preference) {
+                alert('모든 필수 항목을 입력해주세요.');
+                return;
+            }
+
+            // Collect additional info
+            formData.additionalInfo = {
+                school: school,
+                job: job,
+                location: location,
+                hobby: hobby,
+                introduce: introduce,
+                preference: preference
+            };
+
+            // In a real application, you would send this data to a server
+            console.log('Form Data:', formData);
+            
+            // Store in localStorage for the admin to view
+            const submissions = JSON.parse(localStorage.getItem('datingSubmissions') || '[]');
+            submissions.push({
+                ...formData,
+                timestamp: new Date().toISOString(),
+                id: Date.now()
+            });
+            localStorage.setItem('datingSubmissions', JSON.stringify(submissions));
+
+            // Hide step 3 and show success
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('success').classList.remove('hidden');
+            
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
